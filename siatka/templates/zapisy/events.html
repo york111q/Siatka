@@ -1,0 +1,11 @@
+{% extends "zapisy/base.html" %}
+  {% block content %}
+    <p>Cokolwiek</p>
+
+
+    {% for event in event_list %}
+      <p>{{event.location}}</p>
+    {% endfor %}
+
+
+  {% endblock %}
