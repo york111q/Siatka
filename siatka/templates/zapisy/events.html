@@ -5,6 +5,7 @@
 
     {% for event in event_list %}
       <p>{{event.location}}</p>
+      <a href="{% url 'new_entry' event.id %}"><button class="btn btn-primary">Zapisy</button></a>
     {% endfor %}
 
 

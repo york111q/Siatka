@@ -3,5 +3,9 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('events/', views.AllEventsView.as_view(), name='events')
+    path('', views.AllEventsView.as_view(), name='events'),
+    path('hall-of-fame/', views.HallOfFameView.as_view(), name='hof'),
+    path('new-entry/<int:id>', views.new_entry, name='new_entry'),
+    path('player/<int:id>', views.PlayerDetailView.as_view(), name='player'),
+    path('event/<int:id>', views.EventDetailView.as_view(), name='event')
 ]
