@@ -1,12 +1,20 @@
 {% extends "zapisy/base.html" %}
+{% load static %}
+{% load filters %}
   {% block content %}
     <p>Cokolwiek</p>
 
 
     {% for event in event_list %}
-      <p>{{event.location}}</p>
-      <a href="{% url 'new_entry' event.id %}"><button class="btn btn-primary">Zapisy</button></a>
+      <p>{{event.location|slugify}}</p>
+      <div class="gallery">
+        <a href="{% url 'new_entry' event.id %}">
+          <img src="{% static event.location|nice_string %}" alt="Cinque Terre" width="600" height="400">
+        </a>
+        <div class="desc">Add a description of the image here</div>
+      </div>
     {% endfor %}
 
+  
 
   {% endblock %}

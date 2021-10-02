@@ -20,6 +20,7 @@ class Event(models.Model):
     price_multisport = models.FloatField(default=0)
     player_slots = models.IntegerField(default=12)
     coach = models.BooleanField(default=False)
+    loc_image = models.ImageField(null=True, blank=True)
 
     def __str__(self):
         return self.date.strftime('%Y-%m-%d %H:%M %A') + " " + self.location
