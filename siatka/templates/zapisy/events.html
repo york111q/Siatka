@@ -9,12 +9,12 @@
       <p>{{event.location|slugify}}</p>
       <div class="gallery">
         <a href="{% url 'new_entry' event.id %}">
-          <img src="{% static event.location|nice_string %}" alt="Cinque Terre" width="600" height="400">
+          <img src="{% static event.location|img_url %}" alt="Cinque Terre" width="600" height="400">
         </a>
         <div class="desc">Add a description of the image here</div>
       </div>
     {% endfor %}
 
-  
+
 
   {% endblock %}

@@ -1,6 +1,25 @@
 {% extends "zapisy/base.html" %}
   {% block content %}
+  {% load filters %}
+
     <p>Cokolwiek hall of fame</p>
+    <h1>aaaaa</h1>
+
+    <table>
+      <thead>
+        <th>Gracz</th>
+        <th>Saldo</th>
+      </thead>
+
+      {% for pl in players %}
+        <tr>
+          {% for td in pl %}
+            <td>{{td}}</td>
+          {% endfor %}
+
+        </tr>
+      {% endfor %}
+    </table>
 
 
 

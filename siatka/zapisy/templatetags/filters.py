@@ -3,5 +3,5 @@ from django.utils.text import slugify
 register = template.Library()
 
 @register.filter
-def nice_string(text):
+def img_url(text):
     return "zapisy/images/"+slugify(text)+".jpg"
