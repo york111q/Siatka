@@ -13,9 +13,11 @@
 
       {% for pl in players %}
         <tr>
-          {% for td in pl %}
+          <!-- {% for td in pl %}
             <td>{{td}}</td>
-          {% endfor %}
+          {% endfor %} -->
+          <td><a href="{% url 'player' pl.id %}">{{pl.name}}</a></td>
+          <td>{{pl.balance|floatformat:2}}</td>
 
         </tr>
       {% endfor %}

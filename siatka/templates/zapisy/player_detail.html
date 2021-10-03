@@ -2,6 +2,43 @@
   {% block content %}
     <p>Cokolwiek player_detail</p>
 
+    <h1>{{name}}</h1>
+    <h2>{{balance}}</h2>
+
+    <h3>WINNY</h3>
+    {% for entry in entries_unpaid %}
+      <p>{{entry.event}}</p>
+    {% endfor %}
+
+    <table>
+      <thead>
+        <th>Data</th>
+        <th>Lokalizacja</th>
+        <th>Multisport</th>
+        <th>Serwy</th>
+        <th>Opłacone serwy</th>
+        <th>Opłacone wejście</th>
+        <th>Rezygnacja</th>
+        <th>Do zapłaty</th>
+      </thead>
+      {% for entry in entries_unpaid_list %}
+        <tr>
+          <td>{{entry.date}}</td>
+          <td>{{entry.location}}</td>
+          <td>{{entry.multisport}}</td>
+          <td>{{entry.serves}}</td>
+          <td>{{entry.serves_paid}}</td>
+          <td>{{entry.paid}}</td>
+          <td>{{entry.resign}}</td>
+          <td>{{entry.payment|floatformat:2}}</td>
+        </tr>
+      {% endfor %}
+    </table>
+
+    <h3>Wszystkie wydarzenia</h3>
+    {% for entry in all_entries %}
+      <p>{{entry.event}}</p>
+    {% endfor %}
 
 
   {% endblock %}
