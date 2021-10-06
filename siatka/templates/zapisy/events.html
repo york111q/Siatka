@@ -4,16 +4,32 @@
   {% block content %}
     <p>Cokolwiek</p>
 
-
-    {% for event in event_list %}
-      <p>{{event.location|slugify}}</p>
+    <h2>Nadchodzące</h2>
+    {% for event in upcoming %}
       <div class="gallery">
+        <p>{{event.location.address}}</p>
+        <p>{{event.date|show_date}}</p>
         <a href="{% url 'new_entry' event.id %}">
-          <img src="{% static event.location|img_url %}" alt="Cinque Terre" width="600" height="400">
+          <img src="{{ event.location.image.url }}" alt="Cinque Terre" width="600" height="400">
         </a>
         <div class="desc">Add a description of the image here</div>
       </div>
     {% endfor %}
+
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+    <h2>Zakończone</h2>
+    {% for event in ended %}
+      <div class="gallery">
+        <p>{{event.location.address}}</p>
+        <p>{{event.date|show_date}}</p>
+        <a href="{% url 'new_entry' event.id %}">
+          <img src="{{ event.location.image.url }}" alt="Cinque Terre" width="600" height="400">
+        </a>
+        <div class="desc">Add a description of the image here</div>
+      </div>
+    {% endfor %}
+
 
 
 
