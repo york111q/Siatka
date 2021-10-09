@@ -9,7 +9,7 @@
       <div class="gallery">
         <p>{{event.location.address}}</p>
         <p>{{event.date|show_date}}</p>
-        <a href="{% url 'new_entry' event.id %}">
+        <a href="{% url 'event' event.id %}">
           <img src="{{ event.location.image.url }}" alt="Cinque Terre" width="600" height="400">
         </a>
         <div class="desc">Add a description of the image here</div>
@@ -23,7 +23,7 @@
       <div class="gallery">
         <p>{{event.location.address}}</p>
         <p>{{event.date|show_date}}</p>
-        <a href="{% url 'new_entry' event.id %}">
+        <a href="{% url 'event' event.id %}">
           <img src="{{ event.location.image.url }}" alt="Cinque Terre" width="600" height="400">
         </a>
         <div class="desc">Add a description of the image here</div>

@@ -1,6 +1,23 @@
 {% extends "zapisy/base.html" %}
   {% block content %}
-    <p>Cokolwiek event detail</p>
+    <p>Cokolwiek new entry</p>
+    <form action="{% url 'playerform' event_id %}" method="post">
+      {% csrf_token %}
+      {{ playerform.as_p }}
+      <input type="submit" name="playerentry" value="zapisz">
+
+    </form>
+
+    {% if user.is_authenticated %}
+      <form action="{% url 'adminform' event_id %}" method="post">
+        {% csrf_token %}
+        {% for form in adminforms %}
+          {{ form.as_ul }}
+          <p></p>
+        {% endfor %}
+        <input type="submit" name="playerentry" value="zapisz">
+      </form>
+    {% endif %}
 
 
 

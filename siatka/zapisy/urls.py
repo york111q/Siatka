@@ -9,7 +9,9 @@ urlpatterns = [
     path('hall-of-fame/', views.HallOfFameView.as_view(), name='hof'),
     path('new-entry/<int:id>', views.new_entry, name='new_entry'),
     path('player/<int:pk>', views.PlayerDetailView.as_view(), name='player'),
-    path('event/<int:id>', views.EventDetailView.as_view(), name='event'),
+    path('event/<int:pk>', views.EventDetailView.as_view(), name='event'),
+    path('event/<int:id>/playerform', views.PlayerFormView.as_view(), name='playerform'),
+    path('event/<int:id>/adminform', views.AdminFormView.as_view(), name='adminform'),
 ]
 
 if settings.DEBUG:

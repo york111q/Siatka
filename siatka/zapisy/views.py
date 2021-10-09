@@ -3,9 +3,9 @@ from django.conf import settings
 from django.db.models import Sum
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.views.generic import ListView, TemplateView, DetailView
+from django.views.generic import ListView, TemplateView, DetailView, FormView
 from .models import Event, Player, Entry
-from .forms import EntryForm
+from .forms import EntryForm, EventManagerForm
 
 # Create your views here.
 SERVE_PRICE = 2
@@ -99,8 +99,57 @@ class PlayerDetailView(DetailView):
 
         return context
 
-class EventDetailView(DetailView):
-    template_name = "zapisy/event_detail.html"
+class EventDetailView(TemplateView):
+    template_name = 'zapisy/event_detail.html'
+
+    def get(self, request, *args, **kwargs):
+        playerform = EntryForm(self.request.GET or None)
+        adminform = EventManagerForm(self.request.GET or None)
+
+        context = self.get_context_data(**kwargs)
+        context['playerform'] = playerform
+
+        adminformlist = [EventManagerForm(self.request.GET or None, prefix=str(i)) for i in range(Event.objects.get(id=kwargs['pk']).player_slots)]
+        context['adminforms'] = adminformlist
+        context['event_id'] = kwargs['pk']
+
+        return self.render_to_response(context)
+
+class PlayerFormView(FormView):
+    form_class = EntryForm
+    template_name = 'zapisy/success.html'
+    success_url = '/'
+
+    def post(self, request, *args, **kwargs):
+        playerform = self.form_class(request.POST)
+        adminform = EventManagerForm()
+        if playerform.is_valid():
+            entry = playerform.save(commit=False)
+            entry.event = Event.objects.get(id=kwargs['id'])
+            entry.save()
+            return self.render_to_response(self.get_context_data(success=True))
+        else:
+            return self.render_to_response(self.get_context_data(playerform=playerform))
+
+class AdminFormView(FormView):
+    form_class = EventManagerForm
+    template_name = 'zapisy/success.html'
+    success_url = '/'
+
+    def post(self, request, *args, **kwargs):
+        playerform = EventManagerForm()
+
+        forms = []
+        for i in range(Event.objects.get(id=kwargs['id']).player_slots):
+            forms.append(self.form_class(self.request.POST, prefix=str(i)))
+
+        for adminform in forms:
+            if adminform.is_valid():
+                if adminform.cleaned_data['player']:
+                    entry = adminform.save(commit=False)
+                    entry.event = Event.objects.get(id=kwargs['id'])
+                    entry.save()
+        return self.render_to_response(self.get_context_data(success=True))
 
 
 def new_entry(request, id):
@@ -114,7 +163,5 @@ def new_entry(request, id):
             entry.event = Event.objects.get(id=id)
             entry.save()
             return redirect(reverse('events'))
-    #    else:
-    #        return
 
     return render(request, 'zapisy/new_entry.html', {'form': form})
