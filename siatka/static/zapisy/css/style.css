@@ -80,3 +80,7 @@ div.gallery {
 li {
   display: inline;
 }
+
+.red {
+  color: red;
+}

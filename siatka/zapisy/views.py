@@ -1,11 +1,13 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from django.conf import settings
 from django.db.models import Sum
+from django.forms.models import model_to_dict
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import ListView, TemplateView, DetailView, FormView
 from .models import Event, Player, Entry
 from .forms import EntryForm, EventManagerForm
+import pytz
 
 # Create your views here.
 SERVE_PRICE = 2
@@ -14,7 +16,7 @@ class AllEventsView(ListView):
     model = Event
     template_name = "zapisy/events.html"
 
-    def get_context_data(self,**kwargs):
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['upcoming'] = Event.objects.filter(date__gte=datetime.now())
         context['ended'] = Event.objects.filter(date__lte=datetime.now())
@@ -70,11 +72,13 @@ class PlayerDetailView(DetailView):
         context['balance'] = balance
 
         all_unpaid = (entries_unpaid | entries_unpaid_serves).order_by('-event__date')
+        all_entries = Entry.objects.filter(player=player).order_by('-event__date')
 
         entries_unpaid_list = []
-        for entry in all_unpaid:
+        #for entry in all_unpaid:
+        for entry in all_entries:
             payment = 0
-            if entry.paid:
+            if not entry.paid:
                 if entry.multisport:
                     payment += entry.event.price_multisport
                 else:
@@ -109,9 +113,22 @@ class EventDetailView(TemplateView):
         context = self.get_context_data(**kwargs)
         context['playerform'] = playerform
 
-        adminformlist = [EventManagerForm(self.request.GET or None, prefix=str(i)) for i in range(Event.objects.get(id=kwargs['pk']).player_slots)]
+        event = Event.objects.get(id=kwargs['pk'])
+        event_entries = Entry.objects.filter(event=event)
+
+        adminformlist = []
+        for i in range(event.player_slots):
+            try:
+                data = model_to_dict(event_entries[i], fields=['player', 'multisport', 'serves', 'paid', 'serves_paid', 'resign'])
+                print(data)
+                adminformlist.append(EventManagerForm(self.request.GET or None, prefix=str(i), initial=data))
+            except:
+                adminformlist.append(EventManagerForm(self.request.GET or None, prefix=str(i)))
+
         context['adminforms'] = adminformlist
         context['event_id'] = kwargs['pk']
+        context['ended'] = event.date < datetime.now()
+        context['event'] = event
 
         return self.render_to_response(context)
 
@@ -124,9 +141,8 @@ class PlayerFormView(FormView):
         playerform = self.form_class(request.POST)
         adminform = EventManagerForm()
         if playerform.is_valid():
-            entry = playerform.save(commit=False)
-            entry.event = Event.objects.get(id=kwargs['id'])
-            entry.save()
+            Entry.objects.update_or_create(event=Event.objects.get(id=kwargs['id']), player=playerform.cleaned_data['player'], defaults=playerform.cleaned_data)
+
             return self.render_to_response(self.get_context_data(success=True))
         else:
             return self.render_to_response(self.get_context_data(playerform=playerform))
@@ -146,9 +162,8 @@ class AdminFormView(FormView):
         for adminform in forms:
             if adminform.is_valid():
                 if adminform.cleaned_data['player']:
-                    entry = adminform.save(commit=False)
-                    entry.event = Event.objects.get(id=kwargs['id'])
-                    entry.save()
+                    Entry.objects.update_or_create(event=Event.objects.get(id=kwargs['id']), player=adminform.cleaned_data['player'], defaults=adminform.cleaned_data)
+
         return self.render_to_response(self.get_context_data(success=True))
 
 

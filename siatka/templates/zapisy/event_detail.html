@@ -1,14 +1,27 @@
 {% extends "zapisy/base.html" %}
   {% block content %}
-    <p>Cokolwiek new entry</p>
-    <form action="{% url 'playerform' event_id %}" method="post">
-      {% csrf_token %}
-      {{ playerform.as_p }}
-      <input type="submit" name="playerentry" value="zapisz">
+  {% load filters %}
 
-    </form>
+    <h1>{{ event.date|show_date }}</h1>
+    <h2>{{ event.location }}</h2>
+    <h6>Cena: {{ event.price|floatformat:2 }}zł</h6>
+    <h6>Cena multisport: {{ event.price_multisport|floatformat:2 }}zł</h6>
+    <br>
+
+    <h4>Zapisz się:</h4>
+    {% if not ended %}
+      <form action="{% url 'playerform' event_id %}" method="post">
+        {% csrf_token %}
+        {{ playerform.as_p }}
+        <input type="submit" name="playerentry" value="zapisz">
+      </form>
+    {% else %}
+      <p class="red">Zapisy nie są dostępne po godzinie rozpoczęcia gry.</p>
+    {% endif %}
 
     {% if user.is_authenticated %}
+      <br>
+      <h4>Panel administracyjny</h4>
       <form action="{% url 'adminform' event_id %}" method="post">
         {% csrf_token %}
         {% for form in adminforms %}
