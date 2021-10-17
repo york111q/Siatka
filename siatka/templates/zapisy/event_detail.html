@@ -19,6 +19,57 @@
       <p class="red">Zapisy nie są dostępne po godzinie rozpoczęcia gry.</p>
     {% endif %}
 
+    <h4>Lista zapisanych:</h4>
+    <table>
+      <thead>
+        <th></th>
+        <th>Gracz</th>
+        <th>MS</th>
+        <th>Serwy</th>
+        <th>Do zapłaty</th>
+      </thead>
+
+      {% for entry in player_entries %}
+        <tr>
+          <td>{{forloop.counter}}</td>
+          <td>{{entry.player}}</td>
+          <td>{{entry.multisport}}</td>
+          <td>{{entry.serves}}</td>
+          {% if entry.multisport %}
+            {% if entry.paid %}
+              {% if entry.serves_paid %}
+                <td>0.00zł</td>
+              {% else %}
+                <td>{{entry.serves|multiply:2|floatformat:2}}zł</td>
+              {% endif %}
+            {% else %}
+              {% if entry.serves_paid %}
+                <td>{{event.price_multisport|floatformat:2}}zł</td>
+              {% else %}
+                <td>{{entry.serves|multiply:2|add:event.price_multisport|floatformat:2}}zł</td>
+              {% endif %}
+            {% endif %}
+          {% else %}
+            {% if entry.paid %}
+              {% if entry.serves_paid %}
+                <td>0.00zł</td>
+              {% else %}
+                <td>{{entry.serves|multiply:2|floatformat:2}}zł</td>
+              {% endif %}
+            {% else %}
+              {% if entry.serves_paid %}
+                <td>{{event.price|floatformat:2}}zł</td>
+              {% else %}
+                <td>{{entry.serves|multiply:2|add:event.price|floatformat:2}}zł</td>
+              {% endif %}
+            {% endif %}
+          {% endif %}
+        </tr>
+      {% endfor %}
+
+    </table>
+
+
     {% if user.is_authenticated %}
       <br>
       <h4>Panel administracyjny</h4>

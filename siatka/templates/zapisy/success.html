@@ -1,7 +1,11 @@
 {% extends "zapisy/base.html" %}
   {% block content %}
 
-  <h1>Udało się</h1>
+  {% if success %}
+    <h1>Udało się</h1>
+  {% else %}
+    <h1>NIE</h1>
+  {% endif %}
 
 
   {% endblock %}

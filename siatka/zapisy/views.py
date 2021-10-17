@@ -120,7 +120,6 @@ class EventDetailView(TemplateView):
         for i in range(event.player_slots):
             try:
                 data = model_to_dict(event_entries[i], fields=['player', 'multisport', 'serves', 'paid', 'serves_paid', 'resign'])
-                print(data)
                 adminformlist.append(EventManagerForm(self.request.GET or None, prefix=str(i), initial=data))
             except:
                 adminformlist.append(EventManagerForm(self.request.GET or None, prefix=str(i)))
@@ -129,6 +128,7 @@ class EventDetailView(TemplateView):
         context['event_id'] = kwargs['pk']
         context['ended'] = event.date < datetime.now()
         context['event'] = event
+        context['player_entries'] = Entry.objects.filter(event=event)
 
         return self.render_to_response(context)
 
@@ -141,7 +141,12 @@ class PlayerFormView(FormView):
         playerform = self.form_class(request.POST)
         adminform = EventManagerForm()
         if playerform.is_valid():
-            Entry.objects.update_or_create(event=Event.objects.get(id=kwargs['id']), player=playerform.cleaned_data['player'], defaults=playerform.cleaned_data)
+            event = Event.objects.get(id=kwargs['id'])
+            player_entries = Entry.objects.filter(event=event)
+            if player_entries.count() < event.player_slots:
+                Entry.objects.update_or_create(event=event, player=playerform.cleaned_data['player'], defaults=playerform.cleaned_data)
+            else:
+                return self.render_to_response(self.get_context_data(success=False))
 
             return self.render_to_response(self.get_context_data(success=True))
         else:
@@ -155,14 +160,20 @@ class AdminFormView(FormView):
     def post(self, request, *args, **kwargs):
         playerform = EventManagerForm()
 
+        event = Event.objects.get(id=kwargs['id'])
         forms = []
-        for i in range(Event.objects.get(id=kwargs['id']).player_slots):
+        for i in range(event.player_slots):
             forms.append(self.form_class(self.request.POST, prefix=str(i)))
 
         for adminform in forms:
             if adminform.is_valid():
                 if adminform.cleaned_data['player']:
-                    Entry.objects.update_or_create(event=Event.objects.get(id=kwargs['id']), player=adminform.cleaned_data['player'], defaults=adminform.cleaned_data)
+                    player_entries = Entry.objects.filter(event=event)
+                    Entry.objects.update_or_create(event=event, player=adminform.cleaned_data['player'], defaults=adminform.cleaned_data)
+                    if player_entries.count() > event.player_slots:
+                        entry = Entry.objects.get(event=event, player=adminform.cleaned_data['player'], defaults=adminform.cleaned_data)
+                        entry.delete()
+                        return self.render_to_response(self.get_context_data(success=False))
 
         return self.render_to_response(self.get_context_data(success=True))
 
