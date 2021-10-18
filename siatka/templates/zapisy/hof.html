@@ -1,10 +1,11 @@
 {% extends "zapisy/base.html" %}
   {% block content %}
   {% load filters %}
-
-    <p>Cokolwiek hall of fame</p>
-    <h1>aaaaa</h1>
-
+  {% load static %}
+  <div id="hof">
+    <img src="{% get_media_prefix %}hof.png" alt="Cinque Terre">
+  </div>
+  <div>
     <table>
       <thead>
         <th>Gracz</th>
@@ -22,7 +23,7 @@
         </tr>
       {% endfor %}
     </table>
-
+  </div>
 
 
   {% endblock %}

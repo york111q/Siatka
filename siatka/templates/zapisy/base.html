@@ -8,8 +8,11 @@
     <link rel="stylesheet" href="{% static "zapisy/css/style.css" %}"/>
   </head>
   <body>
-
-    <div class="container">
+    <div class="header">
+    <div id="logo">
+      <img src="{% get_media_prefix %}logo.jpg" alt="Cinque Terre" width="200" height="100">
+    </div>
+    <div id="navbar">
       <nav class="nav">
         <ul>
           <li class="nav-item">
@@ -26,6 +29,7 @@
           </li>
         </ul>
       </nav>
+    </div>
     </div>
     <div class="container">
 

@@ -2,7 +2,7 @@
 {% load static %}
 {% load filters %}
   {% block content %}
-
+  <div class="center">
     <h2>Nadchodzące</h2>
     {% for event in upcoming %}
       <div class="gallery">
@@ -11,12 +11,19 @@
         <a href="{% url 'event' event.id %}">
           <img src="{{ event.location.image.url }}" alt="Cinque Terre" width="600" height="400">
         </a>
-        <div class="desc">Add a description of the image here</div>
+        <div class="desc">
+          <p>Zajęte miejsca / {{event.player_slots}}</p>
+          <p>{{event.price|floatformat:2}}zł / {{event.price_multisport|floatformat:2}}zł (MS)</p>
+        </div>
       </div>
     {% endfor %}
+  </div>
 
+  <div>
     <br><br><br><br><br><br><br><br><br><br><br><br><br>
+  </div>
 
+    <div class="center">
     <h2>Zakończone</h2>
     {% for event in ended %}
       <div class="gallery">
@@ -25,9 +32,13 @@
         <a href="{% url 'event' event.id %}">
           <img src="{{ event.location.image.url }}" alt="Cinque Terre" width="600" height="400">
         </a>
-        <div class="desc">Add a description of the image here</div>
+        <div class="desc">
+          <p>Zajęte miejsca / {{event.player_slots}}</p>
+          <p>{{event.price|floatformat:2}}zł / {{event.price_multisport|floatformat:2}}zł (MS)</p>
+        </div>
       </div>
     {% endfor %}
+    </div>
 
 
 

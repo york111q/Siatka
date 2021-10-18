@@ -6,12 +6,22 @@ body {
 div {
     margin: 0 auto;
     text-align: center;
+    justify-content: center;
 }
 
 
+.header {
+  height: 100px;  
+  border:1px solid #ccc;
+  border-width:1px 0;
+}
+
+#logo {
+  float:left;
+  width: 200px;
+}
+
 .nav{
-    border:1px solid #ccc;
-    border-width:1px 0;
     list-style:none;
     margin:0;
     padding:0;
@@ -25,7 +35,7 @@ div {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: #333;
+    background-color: rgb(238, 174, 174);
 }
 
 .nav li{
@@ -33,10 +43,10 @@ div {
     display: inline;
     color: white;
     text-align: center;
-    padding: 14px 16px;
+    padding: 27px 40px;
     text-decoration: none;
     float: left;
-    border-right: 1px solid #bbb;
+    border-right: 1px solid rgb(219, 52, 52);
 }
 
 .nav li:last-child {
@@ -46,21 +56,32 @@ div {
 .nav a{
     display:inline-block;
     padding:10px;
+    opacity: 1;
+    color: black;
+    
+
 }
 
 .nav li a:hover {
-    background-color: #111;
+    opacity: 0.5;
 }
 
-.nav .active {
-    background-color: #04AA6D;
+.nav a:active {
+    background-color: rgb(219, 52, 52);
+}
+
+.center {
+  margin: auto;
+  width: 100%;
+  padding: 30px;
+  justify-content: center;
 }
 
 div.gallery {
     margin: 5px;
     border: 1px solid #ccc;
     float: left;
-    width: 180px;
+    width: 200px;
   }
 
   div.gallery:hover {
