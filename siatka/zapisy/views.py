@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from django.conf import settings
-from django.db.models import Sum
+from django.db.models import Sum, Count
 from django.forms.models import model_to_dict
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -18,8 +18,9 @@ class AllEventsView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['upcoming'] = Event.objects.filter(date__gte=datetime.now())
-        context['ended'] = Event.objects.filter(date__lte=datetime.now())
+        events = Event.objects.annotate(num_signed=Count('entry'))
+        context['upcoming'] = events.filter(date__gte=datetime.now())
+        context['ended'] = events.filter(date__lte=datetime.now())
         return context
 
 class HallOfFameView(ListView):

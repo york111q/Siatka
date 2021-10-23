@@ -12,7 +12,7 @@
           <img src="{{ event.location.image.url }}" alt="Cinque Terre" width="600" height="400">
         </a>
         <div class="desc">
-          <p>Zajęte miejsca / {{event.player_slots}}</p>
+          <p>Zapisanych: {{event.num_signed}} / {{event.player_slots}}</p>
           <p>{{event.price|floatformat:2}}zł / {{event.price_multisport|floatformat:2}}zł (MS)</p>
         </div>
       </div>
@@ -33,7 +33,7 @@
           <img src="{{ event.location.image.url }}" alt="Cinque Terre" width="600" height="400">
         </a>
         <div class="desc">
-          <p>Zajęte miejsca / {{event.player_slots}}</p>
+          <p>Zapisanych: {{event.num_signed}} / {{event.player_slots}}</p>
           <p>{{event.price|floatformat:2}}zł / {{event.price_multisport|floatformat:2}}zł (MS)</p>
         </div>
       </div>
