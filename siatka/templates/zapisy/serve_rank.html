@@ -1,0 +1,28 @@
+{% extends "zapisy/base.html" %}
+  {% block content %}
+  {% load filters %}
+
+  <h1>Ranking zagrywek</h1>
+
+  <table>
+    <thead>
+      <th></th>
+      <th>Gracz</th>
+      <th>Łącznie zepsutych</th>
+      <th>Rozegranych spotkań</th>
+      <th>Zepsuratio</th>
+    </thead>
+
+    {% for player in players %}
+      <tr>
+        <td>{{forloop.counter}}</td>
+        <td>{{player.name}}</td>
+        <td>{{player.serve}}</td>
+        <td>{{player.events}}</td>
+        <td>{{player.serve|count_ratio:player.events}}</td>
+      </tr>
+    {% endfor %}
+
+  </table>
+
+  {% endblock %}

@@ -13,3 +13,10 @@ def show_date(date):
 @register.filter
 def multiply(value, multiplier):
     return value*multiplier
+
+@register.filter
+def count_ratio(serves, events):
+    if serves and events:
+        return round(serves/events, 2)
+    else:
+        return 0

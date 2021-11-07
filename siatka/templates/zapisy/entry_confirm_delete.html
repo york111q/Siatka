@@ -1,0 +1,16 @@
+{% extends "zapisy/base.html" %}
+  {% block content %}
+
+    <form method="post">
+      {% csrf_token %}
+      <h1>Czy na pewno chcesz usunąć ten zapis?</h1>
+      <br>
+      <h3>Gracz: {{entry.player}}</h3>
+      <h3>Event: {{entry.event}}</h3>
+      <input class="btn btn-danger" type="submit" value="Tak">
+    </form>
+    <a href="{% url 'event' pk=entry.event.id %}">
+      <button class="btn btn-secondary" type="button">Nie</button>
+    </a>
+
+  {% endblock %}

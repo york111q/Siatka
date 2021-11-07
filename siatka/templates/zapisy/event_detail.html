@@ -27,7 +27,11 @@
         <th>MS</th>
         <th>Serwy</th>
         <th>Do zapłaty</th>
+        {% if user.is_authenticated %}
+          <th>Usuń</th>
+        {% endif %}
       </thead>
+
 
       {% for entry in player_entries %}
         <tr>
@@ -64,6 +68,33 @@
               {% endif %}
             {% endif %}
           {% endif %}
+          {% if user.is_authenticated %}
+            <td>
+              <a href="{% url 'entry_delete' pk=entry.id %}">
+                <button class="btn btn-danger btn-sm" type="button">Usuń</button>
+              </a>
+            </td>
+          {% endif %}
+        </tr>
+      {% endfor %}
+
+    </table>
+
+    <br>
+    <h4>Lista rezerwowych:</h4>
+    <table>
+      <thead>
+        <th></th>
+        <th>Gracz</th>
+        <th>MS</th>
+      </thead>
+
+
+      {% for entry in player_reserve %}
+        <tr>
+          <td>{{forloop.counter}}</td>
+          <td>{{entry.player}}</td>
+          <td>{{entry.multisport}}</td>
         </tr>
       {% endfor %}
 

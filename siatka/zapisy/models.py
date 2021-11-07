@@ -27,6 +27,8 @@ class Event(models.Model):
 class Entry(models.Model):
     event = models.ForeignKey("Event", on_delete=models.CASCADE)
     player = models.ForeignKey("Player", on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True, editable=True)
+    reserve = models.BooleanField(default=False)
     multisport = models.BooleanField(default=False)
     serves = models.IntegerField(default=0)
     paid = models.BooleanField(default=False)
