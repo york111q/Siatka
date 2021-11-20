@@ -12,18 +12,14 @@
         <th>Saldo</th>
       </thead>
 
-      {% for pl in players %}
+      {% for pl, balance in player_list %}
         <tr>
-          <!-- {% for td in pl %}
-            <td>{{td}}</td>
-          {% endfor %} -->
           <td><a href="{% url 'player' pl.id %}">{{pl.name}}</a></td>
-          <td>{{pl.balance|floatformat:2}}</td>
-
+          <td>{{balance|show_price}}</td>
         </tr>
       {% endfor %}
+
     </table>
   </div>
-
 
   {% endblock %}

@@ -1,14 +1,11 @@
 {% extends "zapisy/base.html" %}
+{% load filters %}
   {% block content %}
-    <p>Cokolwiek player_detail</p>
 
-    <h1>{{name}}</h1>
-    <h2>{{balance|floatformat:2}}zł</h2>
+    <h1>{{player.name}}</h1>
+    <h2>{{player|check_balance}}</h2>
 
     <h3>WINNY</h3>
-    <!-- {% for entry in entries_unpaid %}
-      <p>{{entry.event}}</p>
-    {% endfor %} -->
 
     <table>
       <thead>
@@ -20,29 +17,33 @@
         <th>Opłacone wejście</th>
         <th>Rezygnacja</th>
         <th>Do zapłaty</th>
+        <th>Przejdź do eventu</th>
       </thead>
-      {% for entry in entries_unpaid_list %}
+      {% for entry in entries_unpaid %}
         {% if entry.payment > 0 %}
           <tr class="red">
         {% else %}
           <tr>
         {% endif %}
-            <td>{{entry.date}}</td>
-            <td>{{entry.location}}</td>
+            <td>{{entry.event.date}}</td>
+            <td>{{entry.event.location}}</td>
             <td>{{entry.multisport}}</td>
             <td>{{entry.serves}}</td>
             <td>{{entry.serves_paid}}</td>
             <td>{{entry.paid}}</td>
             <td>{{entry.resign}}</td>
-            <td>{{entry.payment|floatformat:2}}zł</td>
+            <td>{{entry|entry_count_fee}}</td>
+            <td><a href="{% url 'event' entry.event.id %}">Zobacz</a></td>
           </tr>
       {% endfor %}
     </table>
 
+    <br>
     <h3>Wszystkie wydarzenia</h3>
-    {% for entry in all_entries %}
-      <p>{{entry.event}}</p>
-    {% endfor %}
-
+    <ul>
+      {% for entry in all_entries %}
+        <li>{{entry.event}} <a href="{% url 'event' entry.event.id %}">---></a></li><br>
+      {% endfor %}
+    </ul>
 
   {% endblock %}

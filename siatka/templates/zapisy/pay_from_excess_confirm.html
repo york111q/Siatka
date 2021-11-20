@@ -1,0 +1,32 @@
+{% extends "zapisy/base.html" %}
+{% load filters %}
+  {% block content %}
+    {% if user.is_authenticated %}
+
+      <form method="post">
+        {% csrf_token %}
+        <h1>Czy na pewno chcesz opłacić te zapisy?</h1>
+        <br>
+
+        <h3>Nieopłacone wejścia:</h3>
+        <ul>
+          {% for entry in all_unpaid %}
+            <li>{{entry.player}}: {{entry.count_entry_fee|show_price}}</li> <br>
+          {% endfor %}
+        </ul>
+
+        <h3>Nieopłacone serwy:</h3>
+        <ul>
+          {% for entry in all_unpaid_serves %}
+            <li>{{entry.player}}: {{entry.serves|show_price}}</li> <br>
+          {% endfor %}
+        </ul>
+
+        <input class="btn btn-success" type="submit" value="Tak">
+      </form>
+      <a href="{% url 'event' event.id %}">
+        <button class="btn btn-secondary" type="button">Nie</button>
+      </a>
+
+    {% endif %}
+  {% endblock %}

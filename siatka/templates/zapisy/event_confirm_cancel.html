@@ -1,0 +1,17 @@
+{% extends "zapisy/base.html" %}
+  {% block content %}
+    {% if user.is_authenticated %}
+
+      <form method="post">
+        {% csrf_token %}
+        <h1>Czy na pewno chcesz odwołać to wydarzenie?</h1>
+        <br>
+        <h3>Event: {{event}}</h3>
+        <input class="btn btn-danger" type="submit" value="Tak">
+      </form>
+      <a href="{% url 'event' pk=event.id %}">
+        <button class="btn btn-secondary" type="button">Nie</button>
+      </a>
+
+    {% endif %}
+  {% endblock %}

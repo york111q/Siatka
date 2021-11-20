@@ -15,8 +15,13 @@ def multiply(value, multiplier):
     return value*multiplier
 
 @register.filter
-def count_ratio(serves, events):
-    if serves and events:
-        return round(serves/events, 2)
-    else:
-        return 0
+def show_price(value):
+    return str("{:.2f}".format(value)).replace(".", ",") + 'zł'
+
+@register.filter
+def entry_count_fee(object):
+    return str("{:.2f}".format(object.count_total_fee())).replace(".", ",") + 'zł'
+
+@register.filter
+def check_balance(object):
+    return str("{:.2f}".format(object.count_balance())).replace(".", ",") + 'zł'

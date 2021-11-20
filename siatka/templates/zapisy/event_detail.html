@@ -9,14 +9,16 @@
     <br>
 
     <h4>Zapisz się:</h4>
-    {% if not ended %}
+    {% if not ended and not event.cancelled %}
       <form action="{% url 'playerform' event_id %}" method="post">
         {% csrf_token %}
         {{ playerform.as_p }}
         <input type="submit" name="playerentry" value="zapisz">
       </form>
-    {% else %}
+    {% elif ended %}
       <p class="red">Zapisy nie są dostępne po godzinie rozpoczęcia gry.</p>
+    {% elif event.cancelled %}
+      <p class="red">Wydarzenie zostało odwołane.</p>
     {% endif %}
 
     <h4>Lista zapisanych:</h4>
@@ -104,11 +106,20 @@
     {% if user.is_authenticated %}
       <br>
       <h4>Panel administracyjny</h4>
+
+      <a href="{% url 'pay_from_excess_confirm' pk=event.id %}">
+        <button class="btn btn-success btn-sm" type="button">Rozpocznij zapłaty</button>
+      </a>
+
+      <a href="{% url 'event_cancel' event_id %}">
+        <button class="btn btn-warning btn-sm" type="button">Odwołaj</button>
+      </a> <br><br>
+
       <form action="{% url 'adminform' event_id %}" method="post">
         {% csrf_token %}
         {% for form in adminforms %}
           {{ form.as_ul }}
-          <p></p>
+          <br>
         {% endfor %}
         <input type="submit" name="playerentry" value="zapisz">
       </form>
