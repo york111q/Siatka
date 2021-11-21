@@ -8,17 +8,10 @@
         <h1>Czy na pewno chcesz opłacić te zapisy?</h1>
         <br>
 
-        <h3>Nieopłacone wejścia:</h3>
+        <h3>Do zapłaty:</h3>
         <ul>
-          {% for entry in all_unpaid %}
-            <li>{{entry.player}}: {{entry.count_entry_fee|show_price}}</li> <br>
-          {% endfor %}
-        </ul>
-
-        <h3>Nieopłacone serwy:</h3>
-        <ul>
-          {% for entry in all_unpaid_serves %}
-            <li>{{entry.player}}: {{entry.serves|show_price}}</li> <br>
+          {% for entry in all_unpaid_to_pay %}
+            <li>{{entry.player}}: {{entry|entry_count_fee}}</li> <br>
           {% endfor %}
         </ul>
 

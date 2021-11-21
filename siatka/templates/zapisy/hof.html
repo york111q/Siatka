@@ -6,15 +6,15 @@
     <img src="{% get_media_prefix %}hof.png" alt="Cinque Terre">
   </div>
   <div>
-    <table>
+    <table class="table table-borderless table-sm table-responsive">
       <thead>
-        <th>Gracz</th>
-        <th>Saldo</th>
+        <th scope="col">Gracz</th>
+        <th scope="col">Saldo</th>
       </thead>
 
       {% for pl, balance in player_list %}
         <tr>
-          <td><a href="{% url 'player' pl.id %}">{{pl.name}}</a></td>
+          <td scope="row"><a href="{% url 'player' pl.id %}">{{pl.name}}</a></td>
           <td>{{balance|show_price}}</td>
         </tr>
       {% endfor %}

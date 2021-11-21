@@ -1,4 +1,5 @@
 from django import template
+from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 register = template.Library()
 
@@ -24,4 +25,11 @@ def entry_count_fee(object):
 
 @register.filter
 def check_balance(object):
-    return str("{:.2f}".format(object.count_balance())).replace(".", ",") + 'zł'
+    return object.count_balance()
+
+@register.filter(is_safe=True)
+def bool_symbol(bool):
+    if bool:
+        return mark_safe('<i class="bi bi-check-circle text-success"></i>')
+    else:
+        return mark_safe('<i class="bi bi-x-circle text-danger"></i>')

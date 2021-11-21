@@ -2,22 +2,35 @@
 {% load filters %}
   {% block content %}
 
-    <h1>{{player.name}}</h1>
-    <h2>{{player|check_balance}}</h2>
+    <h1><span class="badge badge-secondary">{{player.name}}</span></h1>
 
-    <h3>WINNY</h3>
+    {% with player|check_balance as balance %}
+      <h2>
+        {% if balance < 0 %}
+          <span class="badge badge-danger">
+        {% elif balance > 0 %}
+          <span class="badge badge-success">
+        {% else %}
+          <span class="badge badge-warning">
+        {% endif %}
+          {{balance|show_price}}
+        </span>
+      </h2>
+    {% endwith %}
 
-    <table>
+    <h3>Wydarzenia do opłacenia</h3>
+
+    <table class="table table-borderless table-sm">
       <thead>
-        <th>Data</th>
-        <th>Lokalizacja</th>
-        <th>Multisport</th>
-        <th>Serwy</th>
-        <th>Opłacone serwy</th>
-        <th>Opłacone wejście</th>
-        <th>Rezygnacja</th>
-        <th>Do zapłaty</th>
-        <th>Przejdź do eventu</th>
+        <th scope="col">Data</th>
+        <th scope="col">Lokalizacja</th>
+        <th scope="col">Multisport</th>
+        <th scope="col">Serwy</th>
+        <th scope="col">Opłacone serwy</th>
+        <th scope="col">Opłacone wejście</th>
+        <th scope="col">Rezygnacja</th>
+        <th scope="col">Do zapłaty</th>
+        <th scope="col">Przejdź do eventu</th>
       </thead>
       {% for entry in entries_unpaid %}
         {% if entry.payment > 0 %}
@@ -25,25 +38,50 @@
         {% else %}
           <tr>
         {% endif %}
-            <td>{{entry.event.date}}</td>
+            <td scope="row">{{entry.event.date}}</td>
             <td>{{entry.event.location}}</td>
-            <td>{{entry.multisport}}</td>
+            <td>{{entry.multisport|bool_symbol}}</td>
             <td>{{entry.serves}}</td>
-            <td>{{entry.serves_paid}}</td>
-            <td>{{entry.paid}}</td>
-            <td>{{entry.resign}}</td>
+            <td>{{entry.serves_paid|bool_symbol}}</td>
+            <td>{{entry.paid|bool_symbol}}</td>
+            <td>{{entry.resign|bool_symbol}}</td>
             <td>{{entry|entry_count_fee}}</td>
-            <td><a href="{% url 'event' entry.event.id %}">Zobacz</a></td>
+            <td><a href="{% url 'event' entry.event.id %}">---></a></td>
           </tr>
       {% endfor %}
     </table>
 
     <br>
     <h3>Wszystkie wydarzenia</h3>
-    <ul>
+    <table class="table table-borderless table-sm table-responsive">
+      <thead>
+        <th scope="col">Data</th>
+        <th scope="col">Lokalizacja</th>
+        <th scope="col">Przejdź do eventu</th>
+      </thead>
       {% for entry in all_entries %}
-        <li>{{entry.event}} <a href="{% url 'event' entry.event.id %}">---></a></li><br>
+        <tr>
+          <td scope="row">{{entry.event.date|show_date}}</td>
+          <td>{{entry.event.location}}</td>
+          <td><a href="{% url 'event' entry.event.id %}">---></a></td>
+        </tr>
       {% endfor %}
-    </ul>
+    </table>
+
+    <h3>Wszystkie wpłaty</h3>
+    <table class="table table-borderless table-sm table-responsive">
+      <thead>
+        <tr>
+          <th scope="col">Data</th>
+          <th scope="col">Wpłata</th>
+        </tr>
+      </thead>
+      {% for payment in player_payments %}
+        <tr>
+          <td scope="row">{{payment.created_at}}</td>
+          <td>{{payment.value|show_price}}</td>
+        </tr>
+      {% endfor %}
+    </table>
 
   {% endblock %}

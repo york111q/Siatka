@@ -9,7 +9,7 @@ class Player(models.Model):
     multisport_number = models.CharField(max_length=8, null=True, blank=True)
 
     def count_balance(self):
-        player_entries = Entry.objects.filter(player=self)
+        player_entries = Entry.objects.filter(player=self, reserve=False)
         player_payments = Payment.objects.filter(player=self)
 
         balance = 0
@@ -51,13 +51,22 @@ class Entry(models.Model):
     resign = models.BooleanField(default=False)
 
     def count_entry_fee(self):
-        if self.multisport:
-            return self.event.price_multisport
+        if not self.paid:
+            if self.multisport:
+                return self.event.price_multisport
+            else:
+                return self.event.price
         else:
-            return self.event.price
+            return 0
+
+    def count_serves_fee(self):
+        if not self.serves_paid:
+            return self.serves * 2
+        else:
+            return 0
 
     def count_total_fee(self):
-        return self.count_entry_fee() + self.serves * 2
+        return self.count_entry_fee() + self.count_serves_fee()
 
     def __str__(self):
         return str(self.event) + " | " + str(self.player)

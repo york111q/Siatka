@@ -39,10 +39,37 @@
         <tr>
           <td scope="row">{{forloop.counter}}</td>
           <td>{{entry.player}}</td>
-          <td>{{entry.multisport|bool_symbol}}</td>
+          <td>{{entry.multisport}}</td>
           <td>{{entry.serves}}</td>
-          <td>{{entry|entry_count_fee}}</td>
-
+          {% if entry.multisport %}
+            {% if entry.paid %}
+              {% if entry.serves_paid %}
+                <td>0.00zł</td>
+              {% else %}
+                <td>{{entry.serves|multiply:2|floatformat:2}}zł</td>
+              {% endif %}
+            {% else %}
+              {% if entry.serves_paid %}
+                <td>{{event.price_multisport|floatformat:2}}zł</td>
+              {% else %}
+                <td>{{entry.serves|multiply:2|add:event.price_multisport|floatformat:2}}zł</td>
+              {% endif %}
+            {% endif %}
+          {% else %}
+            {% if entry.paid %}
+              {% if entry.serves_paid %}
+                <td>0.00zł</td>
+              {% else %}
+                <td>{{entry.serves|multiply:2|floatformat:2}}zł</td>
+              {% endif %}
+            {% else %}
+              {% if entry.serves_paid %}
+                <td>{{event.price|floatformat:2}}zł</td>
+              {% else %}
+                <td>{{entry.serves|multiply:2|add:event.price|floatformat:2}}zł</td>
+              {% endif %}
+            {% endif %}
+          {% endif %}
           {% if user.is_authenticated %}
             <td>
               <a href="{% url 'entry_delete' pk=entry.id %}">
@@ -50,7 +77,6 @@
               </a>
             </td>
           {% endif %}
-
         </tr>
       {% endfor %}
 
@@ -69,7 +95,7 @@
         <tr>
           <td scope="row">{{forloop.counter}}</td>
           <td>{{entry.player}}</td>
-          <td>{{entry.multisport|bool_symbol}}</td>
+          <td>{{entry.multisport}}</td>
         </tr>
       {% endfor %}
 
@@ -78,14 +104,14 @@
 
     {% if user.is_authenticated %}
       <br>
-      <h2>Panel administracyjny</h2>
+      <h4>Panel administracyjny</h4>
 
       <a href="{% url 'pay_from_excess_confirm' pk=event.id %}">
-        <button class="btn btn-success" type="button">Rozpocznij zapłaty</button>
+        <button class="btn btn-success btn-sm" type="button">Rozpocznij zapłaty</button>
       </a>
 
       <a href="{% url 'event_cancel' event_id %}">
-        <button class="btn btn-warning" type="button">Odwołaj</button>
+        <button class="btn btn-warning btn-sm" type="button">Odwołaj</button>
       </a> <br><br>
 
       <form action="{% url 'adminform' event_id %}" method="post">

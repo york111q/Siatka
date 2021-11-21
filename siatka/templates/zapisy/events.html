@@ -6,8 +6,16 @@
     <h2>Nadchodzące</h2>
     {% for event in upcoming %}
       <div class="gallery">
-        <p>{{event.location.address}}</p>
-        <p>{{event.date|show_date}}</p>
+        <p>
+          {{event.location.address}} <br>
+          {{event.date|show_date}} <br>
+          {% if event.coach %}
+            Trener: <i class="bi bi-person-check text-success"></i>
+          {% else %}
+            Trener: <i class="bi bi-person-x text-danger"></i>
+          {% endif %}
+        </p>
+
         <a href="{% url 'event' event.id %}">
           <img src="{{ event.location.image.url }}" alt="Cinque Terre" width="600" height="400">
         </a>
@@ -18,9 +26,11 @@
           </div>
         {% else %}
           <div class="desc">
-            <p>Zapisanych: {{event.num_signed}} / {{event.player_slots}}</p>
-            <p>Rezerwowych: {{event.num_reserve}}</p>
-            <p>{{event.price|show_price}} / {{event.price_multisport|show_price}} (MS)</p>
+            <p>
+              Zapisanych: {{event.num_signed}} / {{event.player_slots}} <br>
+              Rezerwowych: {{event.num_reserve}} <br>
+              {{event.price|show_price}} / {{event.price_multisport|show_price}} (MS) <br>
+            </p>
           </div>
         {% endif %}
 
@@ -36,8 +46,15 @@
     <h2>Zakończone</h2>
     {% for event in ended %}
       <div class="gallery">
-        <p>{{event.location.address}}</p>
-        <p>{{event.date|show_date}}</p>
+        <p>
+          {{event.location.address}} <br>
+          {{event.date|show_date}} <br>
+          {% if event.coach %}
+            Trener: <i class="bi bi-person-check text-success"></i>
+          {% else %}
+            Trener: <i class="bi bi-person-x text-danger"></i>
+          {% endif %}
+        </p>
         <a href="{% url 'event' event.id %}">
           <img src="{{ event.location.image.url }}" alt="Cinque Terre" width="600" height="400">
         </a>

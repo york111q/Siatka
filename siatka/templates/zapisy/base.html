@@ -6,6 +6,7 @@
     <title>Siatka</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static "zapisy/css/style.css" %}"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css">
   </head>
   <body>
     <div class="header">
@@ -27,6 +28,11 @@
           <li class="nav-item">
             <a class="nav-link" href="{% url 'player_list' %}">Zawodnicy</a>
           </li>
+          {% if user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'monthly_summary' %}">Podsumowanie miesiąca</a>
+            </li>
+          {% endif %}
         </ul>
       </nav>
     </div>

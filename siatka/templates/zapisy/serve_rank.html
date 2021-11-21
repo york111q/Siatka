@@ -4,18 +4,18 @@
 
   <h1>Ranking zagrywek</h1>
 
-  <table>
+  <table class="table table-borderless table-sm">
     <thead>
-      <th></th>
-      <th>Gracz</th>
-      <th>Łącznie zepsutych</th>
-      <th>Rozegranych spotkań</th>
-      <th>Zepsuratio</th>
+      <th scope="col"></th>
+      <th scope="col">Gracz</th>
+      <th scope="col">Łącznie zepsutych</th>
+      <th scope="col">Rozegranych spotkań</th>
+      <th scope="col">Zepsuratio</th>
     </thead>
 
     {% for player in players %}
       <tr>
-        <td>{{forloop.counter}}</td>
+        <td scope="row">{{forloop.counter}}</td>
         <td>{{player.name}}</td>
         <td>{{player.serve}}</td>
         <td>{{player.events}}</td>

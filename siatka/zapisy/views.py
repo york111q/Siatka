@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, TemplateView, DetailView, FormView, DeleteView, UpdateView
-from .models import Event, Player, Entry
+from .models import Event, Player, Entry, Payment
 from .forms import EntryForm, EventManagerForm
 import pytz
 
@@ -59,6 +59,8 @@ class PlayerDetailView(DetailView):
 
         context['entries_unpaid'] = entries_unpaid.order_by('-event__date')
         context['all_entries'] = attended_entries.order_by('-event__date')
+
+        context['player_payments'] = Payment.objects.filter(player=player)
 
         return context
 
@@ -220,10 +222,40 @@ class EventPayConfirmView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context['event'] = Event.objects.get(id=self.kwargs['pk'])
+        event = Event.objects.get(id=self.kwargs['pk'])
+        context['event'] = event
 
-        all_event_entries = Entry.objects.filter(event=context['event'])
-        context['all_unpaid'] = Entry.objects.filter(paid=False)
-        context['all_unpaid_serves'] = Entry.objects.filter(serves_paid=False)
+        all_event_entries = Entry.objects.filter(event=event, reserve=False)
+        all_unpaid = all_event_entries.filter(Q(paid=False) | Q(serves_paid=False))
+
+        all_unpaid_to_pay = [entry for entry in all_unpaid if entry.count_total_fee() <= entry.player.count_balance() or entry.count_total_fee() == 0]
+
+        context['all_unpaid_to_pay'] = all_unpaid_to_pay
 
         return context
+
+    def post(self, *args, **kwargs):
+
+        context = self.get_context_data()
+        all_unpaid_to_pay = context['all_unpaid_to_pay']
+
+        def update_payments(entry):
+            entry.paid = True
+            entry.serves_paid = True
+            entry.save()
+            return True
+
+        for entry in all_unpaid_to_pay:
+            if entry.count_entry_fee() > 0:
+                Payment.objects.create(player=entry.player, value=-entry.count_entry_fee())
+
+            if entry.count_serves_fee() > 0:
+                Payment.objects.create(player=entry.player, value=-entry.count_serves_fee())
+
+            update_payments(entry)
+
+        return HttpResponseRedirect(f'/event/{self.kwargs["pk"]}')
+
+
+class MonthlySummary(TemplateView):
+    template_name = 'zapisy/monthly_summary.html'
