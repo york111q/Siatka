@@ -8,12 +8,27 @@
         <h1>Czy na pewno chcesz opłacić te zapisy?</h1>
         <br>
 
+        {% if all_unpaid_to_pay %}
         <h3>Do zapłaty:</h3>
-        <ul>
-          {% for entry in all_unpaid_to_pay %}
-            <li>{{entry.player}}: {{entry|entry_count_fee}}</li> <br>
-          {% endfor %}
-        </ul>
+          <ul>
+            {% for entry in all_unpaid_to_pay %}
+              <li>{{entry.player}}: {{entry|entry_count_fee}}</li> <br>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <h3>Wejście:</h3>
+            <ul>
+              {% for entry in all_unpaid_fee %}
+                <li>{{entry.player}}</li> <br>
+              {% endfor %}
+            </ul>
+          <h3>Serwy:</h3>
+            <ul>
+              {% for entry in all_unpaid_serves %}
+                <li>{{entry.player}}</li> <br>
+              {% endfor %}
+            </ul>
+        {% endif %}
 
         <input class="btn btn-success" type="submit" value="Tak">
       </form>

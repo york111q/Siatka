@@ -1,7 +1,37 @@
 {% extends "zapisy/base.html" %}
   {% block content %}
+  {% load filters %}
 
   <h1>tu będzie podsumowanie</h1>
+
+  <table class="table table-borderless table-sm">
+    <thead>
+      <th scope="col">Data</th>
+      <th scope="col">Liczba eventów</th>
+      <th scope="col">Łączny koszt wejść</th>
+      <th scope="col">Zapłacone wejścia</th>
+      <th scope="col">Łączny koszt serwów</th>
+      <th scope="col">Zapłacone serwy</th>
+      <th scope="col">Zapłać na stronę</th>
+      <th scope="col">Zajęć z trenerem</th>
+      <th scope="col">Zapłać trenerowi</th>
+    </thead>
+
+    {% for month in try %}
+      <tr scope="row">
+        <td>{{month.date}}</td>
+        <td>{{month.number_of_events}}</td>
+        <td>{{month.total_cost_fees|show_price}}</td>
+        <td>{{month.total_gathered_fees|show_price}}</td>
+        <td>{{month.total_cost_serves|show_price}}</td>
+        <td>{{month.total_gathered_serves|show_price}}</td>
+        <td>{{month.total_for_site|show_price}}</td>
+        <td>{{month.number_of_coaches}}</td>
+        <td>{{month.total_for_coach|show_price}}</td>
+      </tr>
+    {% endfor %}
+
+  </table>
 
 
   {% endblock %}

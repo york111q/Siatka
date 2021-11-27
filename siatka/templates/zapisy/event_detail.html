@@ -28,6 +28,8 @@
         <th scope="col">Gracz</th>
         <th scope="col">MS</th>
         <th scope="col">Serwy</th>
+        <th scope="col">Opłacone wejście</th>
+        <th scope="col">Opłacone serwy</th>
         <th scope="col">Do zapłaty</th>
         {% if user.is_authenticated %}
           <th>Usuń</th>
@@ -41,6 +43,8 @@
           <td>{{entry.player}}</td>
           <td>{{entry.multisport|bool_symbol}}</td>
           <td>{{entry.serves}}</td>
+          <td>{{entry.paid|bool_symbol}}</td>
+          <td>{{entry.serves_paid|bool_symbol}}</td>
           <td>{{entry|entry_count_fee}}</td>
 
           {% if user.is_authenticated %}
@@ -63,6 +67,9 @@
         <th scope="col"></th>
         <th scope="col">Gracz</th>
         <th scope="col">MS</th>
+        {% if user.is_authenticated %}
+          <th>Usuń</th>
+        {% endif %}
       </thead>
 
       {% for entry in player_reserve %}
@@ -70,6 +77,15 @@
           <td scope="row">{{forloop.counter}}</td>
           <td>{{entry.player}}</td>
           <td>{{entry.multisport|bool_symbol}}</td>
+
+          {% if user.is_authenticated %}
+            <td>
+              <a href="{% url 'entry_delete' pk=entry.id %}">
+                <button class="btn btn-danger btn-sm" type="button">Usuń</button>
+              </a>
+            </td>
+          {% endif %}
+
         </tr>
       {% endfor %}
 
@@ -79,6 +95,10 @@
     {% if user.is_authenticated %}
       <br>
       <h2>Panel administracyjny</h2>
+
+      <a href="{% url 'pay_zeros' pk=event.id %}">
+        <button class="btn btn-success" type="button">Zapłać zera</button>
+      </a>
 
       <a href="{% url 'pay_from_excess_confirm' pk=event.id %}">
         <button class="btn btn-success" type="button">Rozpocznij zapłaty</button>

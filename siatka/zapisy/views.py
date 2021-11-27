@@ -8,6 +8,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, TemplateView, DetailView, FormView, DeleteView, UpdateView
 from .models import Event, Player, Entry, Payment
 from .forms import EntryForm, EventManagerForm
+from .utils import summary_maker
 import pytz
 
 # Create your views here.
@@ -24,7 +25,7 @@ class AllEventsView(ListView):
                                         num_reserve=Count(Case(When(entry__reserve=True, then=1), output_field=IntegerField())),
                                         num_paid=Count(Case(When(Q(entry__paid=True) & Q(entry__serves_paid=True), then=1), output_field=IntegerField())))
         context['upcoming'] = events.filter(date__gte=datetime.now())
-        context['ended'] = events.filter(date__lte=datetime.now())
+        context['ended'] = events.filter(date__lte=datetime.now(), cancelled=False).order_by('-date')
         return context
 
 
@@ -257,5 +258,49 @@ class EventPayConfirmView(TemplateView):
         return HttpResponseRedirect(f'/event/{self.kwargs["pk"]}')
 
 
+class EventPay0ConfirmView(TemplateView):
+    template_name = 'zapisy/pay_from_excess_confirm.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        event = Event.objects.get(id=self.kwargs['pk'])
+        context['event'] = event
+
+        all_event_entries = Entry.objects.filter(event=event, reserve=False)
+        all_unpaid = all_event_entries.filter(Q(paid=False) | Q(serves_paid=False))
+
+        all_unpaid_fee = [entry for entry in all_unpaid if entry.count_entry_fee() == 0 and entry.paid == False]
+        all_unpaid_serves = [entry for entry in all_unpaid if entry.count_serves_fee() == 0 and entry.serves_paid == False]
+
+        context['all_unpaid_fee'] = all_unpaid_fee
+        context['all_unpaid_serves'] = all_unpaid_serves
+
+        return context
+
+    def post(self, *args, **kwargs):
+
+        context = self.get_context_data()
+        all_unpaid_to_pay = context['all_unpaid_fee'] + context['all_unpaid_serves']
+
+        for entry in all_unpaid_to_pay:
+            if entry.count_entry_fee() == 0:
+                entry.paid = True
+                entry.save()
+
+            if entry.count_serves_fee() == 0:
+                entry.serves_paid = True
+                entry.save()
+
+        return HttpResponseRedirect(f'/event/{self.kwargs["pk"]}')
+
+
 class MonthlySummary(TemplateView):
     template_name = 'zapisy/monthly_summary.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['try'] = summary_maker.main(Event.objects.order_by('date'))
+
+        return context

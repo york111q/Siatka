@@ -18,6 +18,7 @@ urlpatterns = [
     path('event/<int:id>/adminform', views.AdminFormView.as_view(), name='adminform'),
     path('event/<int:pk>/cancel', views.EventCancelView.as_view(), name='event_cancel'),
     path('event/<int:pk>/pay', views.EventPayConfirmView.as_view(), name='pay_from_excess_confirm'),
+    path('event/<int:pk>/pay_0', views.EventPay0ConfirmView.as_view(), name='pay_zeros'),
 ]
 
 if settings.DEBUG:

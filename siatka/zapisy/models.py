@@ -1,6 +1,8 @@
 from django.db import models
+from django.db.models import Sum
 from django.urls import reverse
 import datetime
+
 
 # Create your models here.
 
@@ -36,8 +38,51 @@ class Event(models.Model):
     coach = models.BooleanField(default=False)
     cancelled = models.BooleanField(default=False)
 
+    def count_normal_cost_fees(self):
+        normal_entries = Entry.objects.filter(event=self, multisport=False).count()
+        return normal_entries * self.price
+
+    def count_ms_cost_fees(self):
+        ms_entries = Entry.objects.filter(event=self, multisport=True).count()
+        return ms_entries * self.price_multisport
+
+    def count_total_cost_fees(self):
+        return self.count_normal_cost_fees() + self.count_ms_cost_fees()
+
+    def count_normal_paid_fees(self):
+        normal_entries = Entry.objects.filter(event=self, multisport=False, paid=True).count()
+        return normal_entries * self.price
+
+    def count_ms_paid_fees(self):
+        ms_entries = Entry.objects.filter(event=self, multisport=True, paid=True).count()
+        return ms_entries * self.price_multisport
+
+    def count_total_paid_fees(self):
+        return self.count_normal_paid_fees() + self.count_ms_paid_fees()
+
+    def count_total_cost_serves(self):
+        event_entries = Entry.objects.filter(event=self).aggregate(Sum('serves'))
+        if event_entries['serves__sum']:
+            return event_entries['serves__sum'] * 2
+        else:
+            return 0
+
+    def count_total_paid_serves(self):
+        event_entries = Entry.objects.filter(event=self, serves_paid=True).aggregate(Sum('serves'))
+        if event_entries['serves__sum']:
+            return event_entries['serves__sum'] * 2
+        else:
+            return 0
+
+    def cost_for_site(self):
+        no_ms_players = Entry.objects.filter(event=self, multisport=False).count()
+        cost = self.price * (10 - no_ms_players)
+        if cost < 0:
+            cost = 0
+        return cost
+
     def __str__(self):
-        return self.date.strftime('%Y-%m-%d %H:%M %A') + " " + self.location.address
+        return self.date.strftime('%Y-%m-%d %H:%M %A')
 
 class Entry(models.Model):
     event = models.ForeignKey("Event", on_delete=models.CASCADE)
