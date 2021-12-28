@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 from django.conf.locale.en import formats as en_formats
+import django_heroku
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +27,7 @@ SECRET_KEY = 'django-insecure-^#+1hgc@p_2vw&3n#6_p-&32eiuqb$z*a56j&o00xo=su70b%n
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['siatka.herokuapp.com']
 
 
 # Application definition
@@ -75,14 +76,14 @@ WSGI_APPLICATION = 'siatka.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
+'''DATABASES = {
  'default': {
      'ENGINE': 'django.db.backends.sqlite3',
      'NAME': BASE_DIR / 'db.sqlite3',
  }
-}
+}'''
 
-'''DATABASES={
+DATABASES={
    'default':{
       'ENGINE':'django.db.backends.postgresql_psycopg2',
       'NAME':'siatka',
@@ -91,7 +92,7 @@ DATABASES = {
       'HOST':'localhost',
       'PORT':'',
    }
-}'''
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -143,3 +144,5 @@ en_formats.DATETIME_FORMAT = "Y-m-d H:i:s"
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+django_heroku.settings(locals())
