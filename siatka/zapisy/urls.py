@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.urls import path
 from . import views
 
+
 urlpatterns = [
     path('', views.AllEventsView.as_view(), name='events'),
     path('hall-of-fame/', views.HallOfFameView.as_view(), name='hof'),

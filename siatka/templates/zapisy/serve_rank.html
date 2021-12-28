@@ -19,7 +19,7 @@
         <td>{{player.name}}</td>
         <td>{{player.serve}}</td>
         <td>{{player.events}}</td>
-        <td>{{player.ratio}}</td>
+        <td>{{player.ratio|floatformat:2}}</td>
       </tr>
     {% endfor %}
 

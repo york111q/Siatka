@@ -84,6 +84,7 @@ class Event(models.Model):
     def __str__(self):
         return self.date.strftime('%Y-%m-%d %H:%M %A')
 
+
 class Entry(models.Model):
     event = models.ForeignKey("Event", on_delete=models.CASCADE)
     player = models.ForeignKey("Player", on_delete=models.CASCADE)
@@ -116,12 +117,14 @@ class Entry(models.Model):
     def __str__(self):
         return str(self.event) + " | " + str(self.player)
 
+
 class Localization(models.Model):
     address = models.CharField(max_length=32)
     image = models.ImageField(upload_to='localizations')
 
     def __str__(self):
         return self.address
+
 
 class Payment(models.Model):
     player = models.ForeignKey("Player", on_delete=models.CASCADE)

@@ -3,7 +3,7 @@
 {% load filters %}
   {% block content %}
   <div class="center">
-    <h2>Nadchodzące</h2>
+    <h2 class="center">Nadchodzące</h2>
     {% for event in upcoming %}
       <div class="gallery">
         <p>
@@ -38,12 +38,8 @@
     {% endfor %}
   </div>
 
-  <div>
-    <br><br><br><br><br><br><br><br><br><br><br><br><br>
-  </div>
-
     <div class="center">
-    <h2>Zakończone</h2>
+    <h2 class="center">Zakończone</h2>
     {% for event in ended %}
       <div class="gallery">
         <p>

@@ -14,6 +14,7 @@ import pytz
 # Create your views here.
 SERVE_PRICE = 2
 
+
 class AllEventsView(ListView):
     model = Event
     template_name = "zapisy/events.html"
@@ -94,8 +95,8 @@ class EventDetailView(TemplateView):
         context['player_entries'] = Entry.objects.filter(event=event, reserve=False)
         context['player_reserve'] = Entry.objects.filter(event=event, reserve=True)
 
-        #return self.render_to_response(context) -- render to response nie działa w django 3+ ?
         return render(request, self.template_name, context)
+
 
 class PlayerFormView(FormView):
     form_class = EntryForm
@@ -116,6 +117,7 @@ class PlayerFormView(FormView):
                 return self.render_to_response(self.get_context_data(success=False))
         else:
             return self.render_to_response(self.get_context_data(playerform=playerform))
+
 
 class AdminFormView(FormView):
     form_class = EventManagerForm
@@ -141,21 +143,6 @@ class AdminFormView(FormView):
                         return self.render_to_response(self.get_context_data(success=False))
 
         return self.render_to_response(self.get_context_data(success=True))
-
-
-'''def new_entry(request, id):
-    form = EntryForm()
-
-    if request.method == "POST":
-        form = EntryForm(request.POST)
-
-        if form.is_valid():
-            entry = form.save(commit=False)
-            entry.event = Event.objects.get(id=id)
-            entry.save()
-            return redirect(reverse('events'))
-
-    return render(request, 'zapisy/new_entry.html', {'form': form})'''
 
 
 class ServeRank(TemplateView):

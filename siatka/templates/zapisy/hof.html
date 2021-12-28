@@ -15,7 +15,7 @@
       {% for pl, balance in player_list %}
         <tr>
           <td scope="row"><a href="{% url 'player' pl.id %}">{{pl.name}}</a></td>
-          <td>{{balance|show_price}}</td>
+          <td>{{balance|show_colored_price}}</td>
         </tr>
       {% endfor %}
 
