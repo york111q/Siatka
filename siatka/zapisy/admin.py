@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Player, Event, Entry, Localization, Payment
+from .models import Player, Event, Entry, Localization, Payment, PlayerOldStats
 
 # Register your models here.
 class EntryAdmin(admin.ModelAdmin):
@@ -35,3 +35,4 @@ admin.site.register(Event, EventAdmin)
 admin.site.register(Entry, EntryAdmin)
 admin.site.register(Localization)
 admin.site.register(Payment, PaymentAdmin)
+admin.site.register(PlayerOldStats)

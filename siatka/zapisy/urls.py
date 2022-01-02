@@ -11,7 +11,6 @@ urlpatterns = [
     path('player-list/', views.PlayersList.as_view(), name='player_list'),
     path('serve-rank/', views.ServeRank.as_view(), name='serve_rank'),
     path('monthly-summary/', views.MonthlySummary.as_view(), name='monthly_summary'),
-    #path('new-entry/<int:id>', views.new_entry, name='new_entry'),
     path('entry/delete/<int:pk>', views.EntryDeleteView.as_view(), name='entry_delete'),
     path('player/<int:pk>', views.PlayerDetailView.as_view(), name='player'),
     path('event/<int:pk>', views.EventDetailView.as_view(), name='event'),

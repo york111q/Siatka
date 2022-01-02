@@ -136,3 +136,12 @@ class Payment(models.Model):
         date = self.created_at.strftime("%Y-%m-%d %H:%M")
         show_value = str(round(self.value, 2)) + "zł"
         return date + " | " + self.player.name + " | " + show_value
+
+
+class PlayerOldStats(models.Model):
+    player = models.OneToOneField("Player", on_delete=models.CASCADE)
+    events = models.PositiveIntegerField()
+    bad_serves = models.PositiveIntegerField()
+
+    def __str__(self):
+        return self.player.name

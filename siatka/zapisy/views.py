@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from django.conf import settings
-from django.db.models import Sum, Count, Case, When, IntegerField, Q, F, ExpressionWrapper, FloatField
+from django.db.models import Sum, Count, Case, When, Value, IntegerField, Q, F, ExpressionWrapper, FloatField
 from django.forms.models import model_to_dict
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
@@ -107,13 +107,18 @@ class PlayerFormView(FormView):
         playerform = self.form_class(request.POST)
         adminform = EventManagerForm()
         if playerform.is_valid():
+            cd = playerform.cleaned_data
             event = Event.objects.get(id=kwargs['id'])
             player_entries = Entry.objects.filter(event=event, reserve=False)
+
+            if cd['player'].multisport_number is not None:
+                cd['multisport'] = True
+
             if player_entries.count() < event.player_slots:
-                Entry.objects.update_or_create(event=event, player=playerform.cleaned_data['player'], defaults=playerform.cleaned_data)
+                Entry.objects.update_or_create(event=event, player=cd['player'], defaults=cd)
                 return self.render_to_response(self.get_context_data(success=True))
             else:
-                Entry.objects.update_or_create(event=event, reserve=True, player=playerform.cleaned_data['player'], defaults=playerform.cleaned_data)
+                Entry.objects.update_or_create(event=event, reserve=True, player=cd['player'], defaults=cd)
                 return self.render_to_response(self.get_context_data(success=False))
         else:
             return self.render_to_response(self.get_context_data(playerform=playerform))
@@ -135,10 +140,17 @@ class AdminFormView(FormView):
         for adminform in forms:
             if adminform.is_valid():
                 if adminform.cleaned_data['player']:
+                    cd = adminform.cleaned_data
                     player_entries = Entry.objects.filter(event=event, reserve=False)
-                    Entry.objects.update_or_create(event=event, player=adminform.cleaned_data['player'], defaults=adminform.cleaned_data)
+
+                    if player_entries.filter(player=cd['player']).count() == 0:
+                        if cd['player'].multisport_number is not None:
+                            cd['multisport'] = True
+
+                    Entry.objects.update_or_create(event=event, player=cd['player'], defaults=cd)
+
                     if player_entries.count() > event.player_slots:
-                        entry = Entry.objects.get(event=event, player=adminform.cleaned_data['player'], defaults=adminform.cleaned_data)
+                        entry = Entry.objects.get(event=event, player=cd['player'], defaults=cd)
                         entry.reserve = True
                         return self.render_to_response(self.get_context_data(success=False))
 
@@ -151,16 +163,23 @@ class ServeRank(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        all_players = Player.objects.all()
+        total_bad_serves = (Case(When(entry__serves__gte=0,
+                                      then=Sum('entry__serves')), default=Value(0)) +
+            Case(When(playeroldstats__bad_serves__gte=0,
+                      then=Sum('playeroldstats__bad_serves')), default=Value(0)))
 
-        total_bad_serves = Sum('entry__serves')
-        events_attended = Count('entry')
+        events_attended = (Case(When(entry__gte=0,
+                                      then=Count('entry')), default=Value(0)) +
+            Case(When(playeroldstats__bad_serves__gte=0,
+                      then=Sum('playeroldstats__events')), default=Value(0)))
+
+        all_players = Player.objects.all()
 
         annotated_players = all_players.annotate(serve=total_bad_serves,
                                                  events=events_attended,
-                                                 ratio=ExpressionWrapper(1.0*total_bad_serves/events_attended, output_field=FloatField()))
+                                                 ratio=ExpressionWrapper(total_bad_serves/events_attended, output_field=FloatField()))
 
-        context['players'] = annotated_players.order_by('-ratio')
+        context['players'] = annotated_players.filter(events__gt=0).order_by('-ratio')
 
         return context
 
