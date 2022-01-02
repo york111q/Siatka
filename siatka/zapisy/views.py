@@ -179,7 +179,10 @@ class ServeRank(TemplateView):
                                                  events=events_attended,
                                                  ratio=ExpressionWrapper(1.0*total_bad_serves/events_attended, output_field=FloatField()))
 
-        context['players'] = annotated_players.filter(events__gt=0).order_by('-ratio')
+        listed_player_queryset = list(set(annotated_players.filter(events__gt=0)))
+        listed_player_queryset.sort(key=lambda x:-x.ratio)
+
+        context['players'] = listed_player_queryset
 
         return context
 

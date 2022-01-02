@@ -17,7 +17,7 @@
         </p>
 
         <a href="{% url 'event' event.id %}">
-          <img src="{% get_static_prefix %}static/zapisy/images/{{ event.location.image_file_name }}" alt="Cinque Terre" width="600" height="400">
+          <img src="{% get_static_prefix %}zapisy/images/{{ event.location.image_file_name }}" alt="Cinque Terre" width="600" height="400">
         </a>
 
         {% if event.cancelled %}
