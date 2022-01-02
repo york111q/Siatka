@@ -120,7 +120,7 @@ class Entry(models.Model):
 
 class Localization(models.Model):
     address = models.CharField(max_length=32)
-    image = models.ImageField(upload_to='localizations')
+    image_file_name = models.CharField(max_length=32)
 
     def __str__(self):
         return self.address
