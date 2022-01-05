@@ -11,11 +11,16 @@ class EntryAdmin(admin.ModelAdmin):
     list_filter = ['event', 'player']
 
 
+class EntryInline(admin.TabularInline):
+    model = Entry
+
+
 class EventAdmin(admin.ModelAdmin):
     list_display = ['__str__', 'location', 'price', 'price_multisport',
                     'player_slots', 'coach', 'cancelled']
     ordering = ('-date',)
     list_filter = ['location', 'coach', 'cancelled']
+    inlines = [EntryInline,]
 
 
 class PaymentAdmin(admin.ModelAdmin):
