@@ -116,10 +116,11 @@ class PlayerFormView(FormView):
 
             if player_entries.count() < event.player_slots:
                 Entry.objects.update_or_create(event=event, player=cd['player'], defaults=cd)
-                return self.render_to_response(self.get_context_data(success=True))
             else:
                 Entry.objects.update_or_create(event=event, reserve=True, player=cd['player'], defaults=cd)
-                return self.render_to_response(self.get_context_data(success=False))
+
+            return redirect('event', event.id)
+
         else:
             return self.render_to_response(self.get_context_data(playerform=playerform))
 
@@ -152,9 +153,9 @@ class AdminFormView(FormView):
                     if player_entries.count() > event.player_slots:
                         entry = Entry.objects.get(event=event, player=cd['player'], defaults=cd)
                         entry.reserve = True
-                        return self.render_to_response(self.get_context_data(success=False))
+                        return redirect('event', event.id)
 
-        return self.render_to_response(self.get_context_data(success=True, event=event.id))
+        return redirect('event', event.id)
 
 
 class ServeRank(TemplateView):

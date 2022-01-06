@@ -100,6 +100,13 @@ class Entry(models.Model):
     serves_paid = models.BooleanField(default=False)
     resign = models.BooleanField(default=False)
 
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            if self.player.multisport_number is not None:
+                self.multisport = True
+
+        super(Entry, self).save(*args, **kwargs)
+
     def count_entry_fee(self):
         if not self.paid:
             if self.multisport:
