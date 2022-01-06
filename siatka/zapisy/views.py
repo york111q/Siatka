@@ -154,7 +154,7 @@ class AdminFormView(FormView):
                         entry.reserve = True
                         return self.render_to_response(self.get_context_data(success=False))
 
-        return self.render_to_response(self.get_context_data(success=True))
+        return self.render_to_response(self.get_context_data(success=True, event=event.id))
 
 
 class ServeRank(TemplateView):
