@@ -10,6 +10,7 @@ urlpatterns = [
     path('hall-of-fame/', views.HallOfFameView.as_view(), name='hof'),
     path('player-list/', views.PlayersList.as_view(), name='player_list'),
     path('serve-rank/', views.ServeRank.as_view(), name='serve_rank'),
+    path('serve-year-rank/<int:year>', views.ServeYearRank.as_view(), name='serve_year_rank'),
     path('monthly-summary/', views.MonthlySummary.as_view(), name='monthly_summary'),
     path('entry/delete/<int:pk>', views.EntryDeleteView.as_view(), name='entry_delete'),
     path('player/<int:pk>', views.PlayerDetailView.as_view(), name='player'),

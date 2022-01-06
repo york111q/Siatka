@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, TemplateView, DetailView, FormView, DeleteView, UpdateView
-from .models import Event, Player, Entry, Payment
+from .models import Event, Player, Entry, Payment, PlayerOldStats
 from .forms import EntryForm, EventManagerForm
 from .utils import summary_maker
 import pytz
@@ -163,26 +163,107 @@ class ServeRank(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        total_bad_serves = (Case(When(entry__serves__gte=0,
-                                      then=Sum('entry__serves')), default=Value(0)) +
-            Case(When(playeroldstats__bad_serves__gte=0,
-                      then=Sum('playeroldstats__bad_serves')), default=Value(0)))
+        events_attended = Count(Case(
+            When(
+                Q(entry__event__date__lt=datetime.now()) &
+                Q(entry__event__include_in_rank=True),
+                then=1
+            ),
+            output_field = IntegerField()),
+            default = Value(0))
 
-        events_attended = (Case(When(entry__gte=0,
-                                      then=Count('entry')), default=Value(0)) +
-            Case(When(playeroldstats__bad_serves__gte=0,
-                      then=Sum('playeroldstats__events')), default=Value(0)))
+        old_events = Case(
+            When(playeroldstats__bad_serves__gte=0, then='playeroldstats__events'),
+            default=Value(0))
 
+        current_serves = Sum(Case(
+            When(entry__event__include_in_rank=True, then='entry__serves'),
+            default=Value(0)))
+
+        old_serves = Case(
+            When(playeroldstats__bad_serves__gte=0, then='playeroldstats__bad_serves'),
+            default=Value(0))
+
+        serve = current_serves + old_serves
+        events = events_attended + old_events
+
+        annotated_players = Player.objects.all().annotate(
+            serve = serve,
+            events = events,
+            ratio = ExpressionWrapper(
+                1.0 * serve / events,
+                output_field = FloatField()
+                )
+            )
+
+        player_queryset = annotated_players.filter(events__gte=5)
+        listed_players = list(set(player_queryset))
+        listed_players.sort(key=lambda x:-x.ratio)
+
+        context['players'] = listed_players
+        context['title'] = "Ranking zagrywek"
+        context['year'] = datetime.now().year
+
+        return context
+
+
+class ServeYearRank(TemplateView):
+    template_name = 'zapisy/serve_year_rank.html'
+
+    def get(self, request, year, *args, **kwargs):
+        context = self.get_context_data()
+        context['year'] = year
+        return render(request, self.template_name, context)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        years = []
+
+        # Stats 2021 - before page started
+        all_stats = PlayerOldStats.objects.all()
+
+        year_stats = (2021, [])
+        for stat in all_stats:
+            if stat.events > 5:
+                year_stats[-1].append({
+                    'name': stat.player.name,
+                    'serve': stat.bad_serves,
+                    'events': stat.events,
+                    'ratio': stat.bad_serves / stat.events
+                })
+
+        years = [year_stats]
+
+        # Stats 2022+ after page started
         all_players = Player.objects.all()
 
-        annotated_players = all_players.annotate(serve=total_bad_serves,
-                                                 events=events_attended,
-                                                 ratio=ExpressionWrapper(1.0*total_bad_serves/events_attended, output_field=FloatField()))
+        for i in range(2022, 2099):
+            year_events = Event.objects.filter(date__year=i, include_in_rank=True)
+            if year_events.count() == 0:
+                break
 
-        listed_player_queryset = list(set(annotated_players.filter(events__gt=0)))
-        listed_player_queryset.sort(key=lambda x:-x.ratio)
+            years.append((i, []))
 
-        context['players'] = listed_player_queryset
+            for player in all_players:
+                entries = Entry.objects.filter(event__in=year_events, player=player)
+
+                serves = 0
+                for entry in entries:
+                    serves += entry.serves
+
+                events = entries.count()
+
+                if events >= 5:
+                    years[-1][-1].append({
+                        'name': player.name,
+                        'serve': serves,
+                        'events': events,
+                        'ratio': 1.0 * serves / events
+                    })
+
+        context['years'] = years
+        context['title'] = f'Ranking za rok '
 
         return context
 

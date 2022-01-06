@@ -1,0 +1,45 @@
+{% extends "zapisy/base.html" %}
+  {% block content %}
+  {% load filters %}
+
+  {% for loop_year, players in years %}
+    {% if loop_year == year %}
+
+      <h1>{{ title }}{{ year }}</h1>
+
+      <table class="table table-borderless table-sm">
+        <thead>
+          <th scope="col"></th>
+          <th scope="col">Gracz</th>
+          <th scope="col">Łącznie zepsutych</th>
+          <th scope="col">Rozegranych spotkań</th>
+          <th scope="col">Zepsuratio</th>
+        </thead>
+
+        {% for player in players %}
+          <tr>
+            <td scope="row">{{forloop.counter}}</td>
+            <td>{{player.name}}</td>
+            <td>{{player.serve}}</td>
+            <td>{{player.events}}</td>
+            <td>{{player.ratio|floatformat:2}}</td>
+          </tr>
+        {% endfor %}
+
+      </table>
+
+      {% for loop_year, players in years %}
+        {% if year != loop_year %}
+
+          <div class=""><h5>
+            <a href="{% url 'serve_year_rank' loop_year %}">Przejdź do statystyk z roku {{ loop_year }}</a>
+          </h5></div>
+
+        {% endif %}
+      {% endfor %}
+
+    {% endif %}
+
+  {% endfor %}
+
+  {% endblock %}

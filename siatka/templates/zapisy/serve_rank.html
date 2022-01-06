@@ -2,7 +2,10 @@
   {% block content %}
   {% load filters %}
 
-  <h1>Ranking zagrywek</h1>
+  <h1>{{ title }}</h1>
+  <br>
+
+  <h4><a href="{% url 'serve_year_rank' year %}">Przejdź do tegorocznych statystyk</a></h4>
 
   <table class="table table-borderless table-sm">
     <thead>

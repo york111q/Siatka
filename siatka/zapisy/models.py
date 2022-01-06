@@ -10,6 +10,9 @@ class Player(models.Model):
     name = models.CharField(max_length=64)
     multisport_number = models.CharField(max_length=8, null=True, blank=True)
 
+    class Meta:
+        ordering = ['name']
+
     def count_balance(self):
         player_entries = Entry.objects.filter(player=self, reserve=False)
         player_payments = Payment.objects.filter(player=self)
@@ -37,6 +40,7 @@ class Event(models.Model):
     player_slots = models.IntegerField(default=12)
     coach = models.BooleanField(default=False)
     cancelled = models.BooleanField(default=False)
+    include_in_rank = models.BooleanField(default=True)
 
     def count_normal_cost_fees(self):
         normal_entries = Entry.objects.filter(event=self, multisport=False).count()
