@@ -238,7 +238,7 @@ class EventPayConfirmView(TemplateView):
         all_event_entries = Entry.objects.filter(event=event, reserve=False)
         all_unpaid = all_event_entries.filter(Q(paid=False) | Q(serves_paid=False))
 
-        all_unpaid_to_pay = [entry for entry in all_unpaid if entry.count_total_fee() <= entry.player.count_balance() or entry.count_total_fee() == 0]
+        all_unpaid_to_pay = [entry for entry in all_unpaid if entry.player.count_balance() >= 0 or entry.count_total_fee() == 0]
 
         context['all_unpaid_to_pay'] = all_unpaid_to_pay
 
