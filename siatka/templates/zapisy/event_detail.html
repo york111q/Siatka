@@ -46,10 +46,10 @@
           <td>{{entry.serves}}</td>
           <td>{{entry.paid|bool_symbol}}</td>
           <td>{{entry.serves_paid|bool_symbol}}</td>
-          <td>{{entry|entry_count_fee}}</td>
+          <td>{{entry.count_total_fee|show_price}}</td>
 
           {% if user.is_authenticated %}
-            <td>{{entry.player|check_balance|show_colored_price}}</td>
+            <td>{{entry.player.count_balance|show_colored_price}}</td>
             <td>
               <a href="{% url 'entry_delete' pk=entry.id %}">
                 <button class="btn btn-danger btn-sm" type="button">Usuń</button>

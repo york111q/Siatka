@@ -12,7 +12,7 @@
         <h3>Do zapłaty:</h3>
           <ul>
             {% for entry in all_unpaid_to_pay %}
-              <li>{{entry.player}}: {{entry|entry_count_fee}}</li> <br>
+              <li>{{entry.player}}: {{entry.count_total_fee|show_price}}</li> <br>
             {% endfor %}
           </ul>
         {% else %}

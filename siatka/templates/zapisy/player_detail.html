@@ -4,7 +4,7 @@
 
     <h1><span class="badge badge-secondary">{{player.name}}</span></h1>
 
-    {% with player|check_balance as balance %}
+    {% with player.count_balance as balance %}
       <h2>
         {% if balance < 0 %}
           <span class="badge badge-danger">
@@ -43,7 +43,7 @@
             <td>{{entry.serves}}</td>
             <td>{{entry.serves_paid|bool_symbol}}</td>
             <td>{{entry.paid|bool_symbol}}</td>
-            <td>{{entry|entry_count_fee}}</td>
+            <td>{{entry.count_total_fee|show_price}}</td>
             <td><a href="{% url 'event' entry.event.id %}">---></a></td>
           </tr>
       {% endfor %}
